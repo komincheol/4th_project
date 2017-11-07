@@ -6,13 +6,12 @@ require 'date'
 require 'csv'
 
 
-get '/welcome/:name' do
-    "Welcome ! #{params[:name]}"
+get '/' do
+     send_file 'index.html'
 end
 
-get '/' do
-    
-     send_file 'index.html'
+get '/welcome/:name' do
+    "Welcome ! #{params[:name]}"
 end
 
 get '/lunch' do
@@ -38,39 +37,17 @@ get '/lol' do
 end
 
 get '/search' do
-    # params = sinatra가 제공하는 빈 hash
-    # @keyword = params[:userName]
-    # "#{@keyword}"
-    
-    # 스크래핑 코드 테스트
-    # res = HTTParty.get("http://www.op.gg/summoner/userName=system+in")
-    # "#{res}"
-
-    # text = Nokogiri::HTML(res.body)
-    # "#{text}"
-    
-    # result = text.css("#SummonerLayoutContent > div.tabItem.Content.SummonerLayoutContent.summonerLayout-summary > div.SideContent > div.TierBox.Box > div.SummonerRatingMedium > div.TierRankInfo > div.TierInfo > span.WinLose > span.wins")
-
-    # "#{result.text}"
-    
-    # 스크래핑 추가
+ 
     url = "http://www.op.gg/summoner/userName="
     
-    # URL encode : https://stackoverflow.com/questions/17375947/parsing-string-to-add-to-url-encoded-url
-    # global substitution : gsub("원래 글자", "바꿀 글자")
-    # @uesrName ="name" 
-    # @id = params[:userName]
-    # keyword = URI.encode(params)
+    @id = params[:userName]
+    keyword = URI.encode(params[:userName])
     
-    @userName = params[:userName].gsub(" ", "+")
-    @keyword = URI.encode(params[:userName].gsub(" ", "+"))
-    
-    
-    res = HTTParty.get(url + @keyword)
+    res = HTTParty.get(url + keyword)
     text = Nokogiri::HTML(res.body)
     
-    @win = text.css("#SummonerLayoutContent > div.tabItem.Content.SummonerLayoutContent.summonerLayout-summary > div.SideContent > div.TierBox.Box > div.SummonerRatingMedium > div.TierRankInfo > div.TierInfo > span.WinLose > span.wins").text
-    @lose = text.css("#SummonerLayoutContent > div.tabItem.Content.SummonerLayoutContent.summonerLayout-summary > div.SideContent > div.TierBox.Box > div.SummonerRatingMedium > div.TierRankInfo > div.TierInfo > span.WinLose > span.losses").text
+    @win = text.css("#SummonerLayoutContent > div.tabItem.Content.SummonerLayoutContent.summonerLayout-summary > div.SideContent > div.TierBox.Box > div.SummonerRatingMedium > div.TierRankInfo > div.TierInfo > span.WinLose > span.wins")
+    @lose = text.css("#SummonerLayoutContent > div.tabItem.Content.SummonerLayoutContent.summonerLayout-summary > div.SideContent > div.TierBox.Box > div.SummonerRatingMedium > div.TierRankInfo > div.TierInfo > span.WinLose > span.losses")
     
     # @win = text.css("span.wins").text
     # @lose = text.css("span.loses").text
