@@ -2,6 +2,13 @@ require 'sinatra'
 require 'uri'
 require 'httparty'
 require 'nokogiri'
+require 'date'
+require 'csv'
+
+
+get '/welcome/:name' do
+    "Welcome ! #{params[:name]}"
+end
 
 get '/' do
     
@@ -61,6 +68,7 @@ get '/search' do
     
     res = HTTParty.get(url + @keyword)
     text = Nokogiri::HTML(res.body)
+    
     @win = text.css("#SummonerLayoutContent > div.tabItem.Content.SummonerLayoutContent.summonerLayout-summary > div.SideContent > div.TierBox.Box > div.SummonerRatingMedium > div.TierRankInfo > div.TierInfo > span.WinLose > span.wins").text
     @lose = text.css("#SummonerLayoutContent > div.tabItem.Content.SummonerLayoutContent.summonerLayout-summary > div.SideContent > div.TierBox.Box > div.SummonerRatingMedium > div.TierRankInfo > div.TierInfo > span.WinLose > span.losses").text
     
@@ -68,31 +76,22 @@ get '/search' do
     # @lose = text.css("span.loses").text
     
     # "#{win.text}"
+    
     CSV.open('log.csv','a+') do |csv|
         csv << [@id, @win.text, @lose.text, Time.now.to_s]
     end
-    
     erb :search
-    
-   # File.open("log.txt",'a+') do |f|
-    #    f.write("#{@id}, #{@win}, #{@lose}" + )
-   # end
-   
 end
+
 
 get '/log' do
     @log=[]
     CSV.foreach('log.csv') do |row|
         @log << row
-        
     end
     erb:log
 end
 
-
-get '/welcome/:name' do
-    "Welcome ! #{params[:name]}"
-end
 
 get '/cube/:num' do
    input= params[:num].to_i

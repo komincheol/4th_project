@@ -12,10 +12,10 @@
                     <th>패</th>
                     <th>날짜</th>
                 </tr>
-                <%= @log.each do |row| %>
+                <% @log.each do |row| %>
                 <tr>
-                    <%row.each do |content|%>
-                    <td><%=content</td>
+                    <% row.each do |content| %>
+                    <td><%= content %></td>
                     <% end %>
                 </tr>
                 <% end %>
